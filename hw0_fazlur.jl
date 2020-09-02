@@ -226,8 +226,16 @@ area_sierpinski(1) = 0.??
 
 # ╔═╡ ca8d2f72-e7b6-11ea-1893-f1e6d0a20dc7
 function area_sierpinski(n)
-	return 1.0
+	if n == 0
+		area = 1.0
+	else
+		area = 3/4*area_sierpinski(n - 1)
+	end
+	return area
 end
+
+# ╔═╡ a72b2500-ecc0-11ea-14f5-b55ab68a900b
+area_sierpinski(3)
 
 # ╔═╡ 71c78614-e7bc-11ea-0959-c7a91a10d481
 if area_sierpinski(0) == 1.0 && area_sierpinski(1) == 3 / 4
@@ -347,7 +355,8 @@ has area **$(area_sierpinski(n))**
 # ╠═df0a4068-e7b2-11ea-2475-81b237d492b3
 # ╟─f22222b4-e7b5-11ea-0ea0-8fa368d2a014
 # ╠═ca8d2f72-e7b6-11ea-1893-f1e6d0a20dc7
-# ╟─71c78614-e7bc-11ea-0959-c7a91a10d481
+# ╠═a72b2500-ecc0-11ea-14f5-b55ab68a900b
+# ╠═71c78614-e7bc-11ea-0959-c7a91a10d481
 # ╟─c21096c0-e856-11ea-3dc5-a5b0cbf29335
 # ╟─52533e00-e856-11ea-08a7-25e556fb1127
 # ╟─147ed7b0-e856-11ea-0d0e-7ff0d527e352
