@@ -25,7 +25,7 @@ Submission by: **_Fazlur_** (fazlur.rahman@mit.edu) **(soon to be)**
 # ╔═╡ 7308bc54-e6cd-11ea-0eab-83f7535edf25
 # edit the code below to set your name and kerberos ID (i.e. email without @mit.edu)
 
-student = (name = "Jazzy Doe", kerberos_id = "jazz")
+student = (name = "Muhammad Fazlur Rahman", kerberos_id = "fazlur.rahman")
 
 # press the ▶ button in the bottom right of this cell to run your edits
 # or use Shift+Enter
