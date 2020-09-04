@@ -618,7 +618,7 @@ function convolve_vector(v, k)
 	for i in 1:length(v)
 		v_new[i] = 0
 		for n in -l:l
-			v_new[i] += extend(v, n+i)*k[n+2]
+			v_new[i] += extend(v, n+i)*k[n+(l+1)]
 		end
 	end
 	
@@ -655,15 +655,24 @@ For simplicity you can take $\sigma=1$.
 
 # ╔═╡ 1c8b4658-ee0c-11ea-2ede-9b9ed7d3125e
 function gaussian_kernel(n)
+	cumulative = 0
+	xValues = -n:n
+	yValues = fill(0.0, length(xValues))
 	
-	return missing
+	for i in 1:length(xValues)
+		x = xValues[i]
+		yValues[i] = 1/(2pi)*exp(-(x^2)/2)
+		cumulative += 1/(2pi)*exp(-(x^2)/2)
+	end
+	
+	return yValues./cumulative
 end
 
 # ╔═╡ f8bd22b8-ee14-11ea-04aa-ab16fd01826e
 md"Let's test your kernel function!"
 
-# ╔═╡ 2a9dd06a-ee13-11ea-3f84-67bb309c77a8
-gaussian_kernel_size_1D = 3 # change this value, or turn me into a slider!
+# ╔═╡ 1630d150-eea8-11ea-0406-4df659597bd1
+@bind gaussian_kernel_size_1D Slider(0:15, show_value=true)
 
 # ╔═╡ 38eb92f6-ee13-11ea-14d7-a503ac04302e
 test_gauss_1D_a = let
@@ -1549,7 +1558,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─80b7566a-ee09-11ea-3939-6fab470f9ec8
 # ╠═1c8b4658-ee0c-11ea-2ede-9b9ed7d3125e
 # ╟─f8bd22b8-ee14-11ea-04aa-ab16fd01826e
-# ╠═2a9dd06a-ee13-11ea-3f84-67bb309c77a8
+# ╠═1630d150-eea8-11ea-0406-4df659597bd1
 # ╟─b424e2aa-ee14-11ea-33fa-35491e0b9c9d
 # ╠═38eb92f6-ee13-11ea-14d7-a503ac04302e
 # ╟─bc1c20a4-ee14-11ea-3525-63c9fa78f089
