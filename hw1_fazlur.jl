@@ -94,13 +94,7 @@ md"👉 Make a function `mean` using a `for` loop, which computes the mean/avera
 
 # ╔═╡ 0ffa8354-edee-11ea-2883-9d5bfea4a236
 function mean(x)
-	sumX = 0
-	
-	for i in x
-		sumX += i
-	end
-	
-	return sumX/size(x)[1]
+	return sum(x)/length(x)
 end
 
 # ╔═╡ 1f104ce4-ee0e-11ea-2029-1d9c817175af
@@ -235,9 +229,14 @@ md"""
 
 # ╔═╡ f6898df6-ee07-11ea-2838-fde9bc739c11
 function mean_colors(image)
+	typeof(image)
 	
 	return missing
 end
+
+# ╔═╡ 5be9b144-ee0d-11ea-2a8d-8775de265a1d
+mean_colors(philip)
+typeof(philip)
 
 # ╔═╡ d75ec078-ee0d-11ea-3723-71fb8eecb040
 
@@ -403,8 +402,8 @@ philip = let
 	decimate(original, 8)
 end
 
-# ╔═╡ 5be9b144-ee0d-11ea-2a8d-8775de265a1d
-mean_colors(philip)
+# ╔═╡ cf40a240-ee80-11ea-210e-bd5c66f7d54f
+typeof(RGB(philip[1]))
 
 # ╔═╡ 9751586e-ee0c-11ea-0cbb-b7eda92977c9
 quantize(philip)
@@ -1413,6 +1412,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─e86ed944-ee05-11ea-3e0f-d70fc73b789c
 # ╟─c54ccdea-ee05-11ea-0365-23aaf053b7d7
 # ╠═f6898df6-ee07-11ea-2838-fde9bc739c11
+# ╠═cf40a240-ee80-11ea-210e-bd5c66f7d54f
 # ╠═5be9b144-ee0d-11ea-2a8d-8775de265a1d
 # ╟─4d0158d0-ee0d-11ea-17c3-c169d4284acb
 # ╠═d75ec078-ee0d-11ea-3723-71fb8eecb040
