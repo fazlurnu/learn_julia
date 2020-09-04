@@ -94,7 +94,13 @@ md"👉 Make a function `mean` using a `for` loop, which computes the mean/avera
 
 # ╔═╡ 0ffa8354-edee-11ea-2883-9d5bfea4a236
 function mean(x)
-	return sum(x)/length(x)
+	sumX = 0
+	
+	for i in x
+		sumX += i
+	end
+		
+	return sumX/length(x)
 end
 
 # ╔═╡ 1f104ce4-ee0e-11ea-2029-1d9c817175af
@@ -111,7 +117,6 @@ md"""👉 Write a function `demean`, which takes a vector `x` and subtracts the 
 
 # ╔═╡ ec5efe8c-edef-11ea-2c6f-afaaeb5bc50c
 function demean(x)
-	
 	return x.-mean(x)
 end
 
@@ -543,8 +548,21 @@ md"""
 
 # ╔═╡ 807e5662-ee09-11ea-3005-21fdcc36b023
 function blur_1D(v, l)
+	v_new = copy(v)
 	
-	return missing
+	if(l != 0)
+		for i in 1:length(v)
+			sumWindow = 0
+			for j in i-l:i+l
+				sumWindow += extend(v, j)
+			end
+			v_new[i] = sumWindow/(2l)
+		end
+		
+		return v_new
+	else
+		return v
+	end
 end
 
 # ╔═╡ 808deca8-ee09-11ea-0ee3-1586fa1ce282
@@ -570,7 +588,12 @@ md"""
 """
 
 # ╔═╡ ca1ac5f4-ee1c-11ea-3d00-ff5268866f87
+@bind l Slider(0:15, show_value=true)
 
+# ╔═╡ dec45ab6-ee9d-11ea-1591-2b10fa18374c
+[colored_line(v)
+ colored_line(blur_1D(v, l))
+]
 
 # ╔═╡ 80ab64f4-ee09-11ea-29b4-498112ed0799
 md"""
@@ -588,8 +611,18 @@ Again, we need to take care about what happens if $v_{i -n }$ falls off the end 
 
 # ╔═╡ 28e20950-ee0c-11ea-0e0a-b5f2e570b56e
 function convolve_vector(v, k)
+	v_new = copy(v)
 	
-	return missing
+	l = (length(k) - 1) ÷ 2
+	
+	for i in 1:length(v)
+		v_new[i] = 0
+		for n in -l:l
+			v_new[i] += extend(v, n+i)*k[n+2]
+		end
+	end
+	
+	return v_new
 end
 
 # ╔═╡ 93284f92-ee12-11ea-0342-833b1a30625c
@@ -1504,6 +1537,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─808deca8-ee09-11ea-0ee3-1586fa1ce282
 # ╟─809f5330-ee09-11ea-0e5b-415044b6ac1f
 # ╠═ca1ac5f4-ee1c-11ea-3d00-ff5268866f87
+# ╠═dec45ab6-ee9d-11ea-1591-2b10fa18374c
 # ╟─ea435e58-ee11-11ea-3785-01af8dd72360
 # ╟─80ab64f4-ee09-11ea-29b4-498112ed0799
 # ╠═28e20950-ee0c-11ea-0e0a-b5f2e570b56e
