@@ -149,8 +149,9 @@ md"""
 
 # ╔═╡ b6b65b94-edf0-11ea-3686-fbff0ff53d08
 function create_bar()
-	
-	return missing
+	x = zeros(100)
+	x[40:60].=1
+	return x
 end
 
 # ╔═╡ 22f28dae-edf2-11ea-25b5-11c369ae1253
@@ -162,8 +163,17 @@ md"""
 
 # ╔═╡ 8c19fb72-ed6c-11ea-2728-3fa9219eddc4
 function vecvec_to_matrix(vecvec)
+	size_row, = size(vecvec)
+	size_col, = size(vecvec[1])
+	mat = zeros(size_row, size_col)
 	
-	return missing
+	for i in 1:size_row
+		for j in 1:size_col
+			mat[i, j] = vecvec[i][j]
+		end
+	end
+	
+	return mat
 end
 
 # ╔═╡ c4761a7e-edf2-11ea-1e75-118e73dadbed
@@ -178,12 +188,13 @@ md"""
 
 # ╔═╡ 9f1c6d04-ed6c-11ea-007b-75e7e780703d
 function matrix_to_vecvec(matrix)
-	
-	return missing
+	return [matrix[i, :] for i in 1:size(matrix,1)]
 end
 
 # ╔═╡ 70955aca-ed6e-11ea-2330-89b4d20b1795
-matrix_to_vecvec([6 7; 8 9])
+begin
+	matrix_to_vecvec([6 7; 8 9; 10 11])
+end
 
 # ╔═╡ 5da8cbe8-eded-11ea-2e43-c5b7cc71e133
 begin
@@ -1393,7 +1404,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─393667ca-edf2-11ea-09c5-c5d292d5e896
 # ╠═9f1c6d04-ed6c-11ea-007b-75e7e780703d
 # ╠═70955aca-ed6e-11ea-2330-89b4d20b1795
-# ╟─e06b7fbc-edf2-11ea-1708-fb32599dded3
+# ╠═e06b7fbc-edf2-11ea-1708-fb32599dded3
 # ╟─5da8cbe8-eded-11ea-2e43-c5b7cc71e133
 # ╟─45815734-ee0a-11ea-2982-595e1fc0e7b1
 # ╟─e083b3e8-ed61-11ea-2ec9-217820b0a1b4
