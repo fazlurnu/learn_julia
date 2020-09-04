@@ -481,7 +481,7 @@ You've seen some colored lines in this notebook to visualize arrays. Can you mak
 """
 
 # ╔═╡ 01070e28-ee0f-11ea-1928-a7919d452bdd
-
+colored_line(v)
 
 # ╔═╡ 7522f81e-ee1c-11ea-35af-a17eb257ff1a
 md"Try changing `n` and `v` around. Notice that you can run the cell `v = rand(n)` again to regenerate new random values."
@@ -498,8 +498,13 @@ A better solution is to use the *closest* value that is inside the vector. Effec
 
 # ╔═╡ 802bec56-ee09-11ea-043e-51cf1db02a34
 function extend(v, i)
-	
-	return missing
+	if (i >= 1 && i <= length(v))
+		return v[i]
+	elseif(i > length(v) )
+		return v[length(v)]
+	else
+		return v[1]
+	end
 end
 
 # ╔═╡ b7f3994c-ee1b-11ea-211a-d144db8eafc2
@@ -509,7 +514,7 @@ md"_Some test cases:_"
 extend(v, 1)
 
 # ╔═╡ 80479d98-ee09-11ea-169e-d166eef65874
-extend(v, -8)
+extend(v, -1)
 
 # ╔═╡ 805691ce-ee09-11ea-053d-6d2e299ee123
 extend(v, n + 10)
