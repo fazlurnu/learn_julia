@@ -87,15 +87,20 @@ md"#### Exerise 1.1
 "
 
 # ╔═╡ f51333a6-eded-11ea-34e6-bfbb3a69bcb0
-random_vect = missing # replace this with your code!
+random_vect = rand(example_vector, 10) # replace this with your code!
 
 # ╔═╡ cf738088-eded-11ea-2915-61735c2aa990
 md"👉 Make a function `mean` using a `for` loop, which computes the mean/average of a vector of numbers."
 
 # ╔═╡ 0ffa8354-edee-11ea-2883-9d5bfea4a236
 function mean(x)
+	sumX = 0
 	
-	return missing
+	for i in x
+		sumX += i
+	end
+	
+	return sumX/size(x)[1]
 end
 
 # ╔═╡ 1f104ce4-ee0e-11ea-2029-1d9c817175af
@@ -105,7 +110,7 @@ mean([1, 2, 3])
 md"👉 Define `m` to be the mean of `random_vect`."
 
 # ╔═╡ 2a391708-edee-11ea-124e-d14698171b68
-m = missing
+m = mean(random_vect)
 
 # ╔═╡ e2863d4c-edef-11ea-1d67-332ddca03cc4
 md"""👉 Write a function `demean`, which takes a vector `x` and subtracts the mean from each value in `x`."""
@@ -113,7 +118,7 @@ md"""👉 Write a function `demean`, which takes a vector `x` and subtracts the 
 # ╔═╡ ec5efe8c-edef-11ea-2c6f-afaaeb5bc50c
 function demean(x)
 	
-	return missing
+	return x.-mean(x)
 end
 
 # ╔═╡ 29e10640-edf0-11ea-0398-17dbf4242de3
