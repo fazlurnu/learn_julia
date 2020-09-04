@@ -339,7 +339,7 @@ md"""
 
 # ╔═╡ f6e2cb2a-ee07-11ea-06ee-1b77e34c1e91
 begin
-	function myclamp(x, lo, hi)
+	function myclamp(x::Number, lo::Number, hi::Number)
 		if (x > hi)
 			return hi
 		elseif (x < lo)
@@ -503,13 +503,13 @@ A better solution is to use the *closest* value that is inside the vector. Effec
 
 # ╔═╡ 802bec56-ee09-11ea-043e-51cf1db02a34
 function extend(v, i)
-	if (i >= 1 && i <= length(v))
-		return v[i]
-	elseif(i > length(v) )
-		return v[length(v)]
-	else
-		return v[1]
+	if (i > length(v))
+		i = length(v)
+	elseif (i < 1)
+		i = 1
 	end
+	
+	return v[i]
 end
 
 # ╔═╡ b7f3994c-ee1b-11ea-211a-d144db8eafc2
@@ -725,8 +725,21 @@ md"""
 
 # ╔═╡ 7c2ec6c6-ee15-11ea-2d7d-0d9401a5e5d1
 function extend_mat(M::AbstractMatrix, i, j)
+	rows, cols = size(M)
 	
-	return missing
+	if (i > rows)
+		i = rows
+	elseif (i < 1)
+		i = 1
+	end
+	
+	if (j > cols)
+		j = cols
+	elseif (j < 1)
+		j = 1
+	end
+	
+	return M[i,j]
 end
 
 # ╔═╡ 9afc4dca-ee16-11ea-354f-1d827aaa61d2
@@ -759,10 +772,40 @@ md"""
 👉 Implement a function `convolve_image(M, K)`. 
 """
 
+# ╔═╡ c313a99a-eeaa-11ea-0ffb-7d3dd3e412f6
+md"""
+ 
+   
+## **Exercise 4** - _Convolutions of images_
+    
+Now let's move to 2D images. The convolution is then given by a **kernel** matrix $K$:
+    
+$$M'_{i, j} = \sum_{k, l}  \, M_{i- k, j - l} \, K_{k, l},$$
+    
+where the sum is over the possible values of $k$ and $l$ in the window. Again we think of the window as being *centered* at $(i, j)$.
+
+A common notation for this operation is $*$:
+
+$$M' = M * K.$$
+"""
+
 # ╔═╡ 8b96e0bc-ee15-11ea-11cd-cfecea7075a0
 function convolve_image(M::AbstractMatrix, K::AbstractMatrix)
+	rows, cols = size(K)
+	M_new = copy(M)
 	
-	return missing
+	for i in 1:size(M,1)
+		for j in 1:size(M,2)
+			M_new[i, j] = 0
+			for k in 1:rows
+				for l in 1:cols
+					M_new[i, j] += clamp(extend_mat(M, i-k, j-l)*K[k,l], 0, 1)
+				end
+			end
+		end
+	end
+	 
+	return M_new
 end
 
 # ╔═╡ 5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
@@ -1564,7 +1607,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─bc1c20a4-ee14-11ea-3525-63c9fa78f089
 # ╠═24c21c7c-ee14-11ea-1512-677980db1288
 # ╟─27847dc4-ee0a-11ea-0651-ebbbb3cfd58c
-# ╠═b01858b6-edf3-11ea-0826-938d33c19a43
+# ╟─b01858b6-edf3-11ea-0826-938d33c19a43
 # ╟─7c1bc062-ee15-11ea-30b1-1b1e76520f13
 # ╠═7c2ec6c6-ee15-11ea-2d7d-0d9401a5e5d1
 # ╟─649df270-ee24-11ea-397e-79c4355e38db
@@ -1577,6 +1620,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─efd1ceb4-ee1c-11ea-350e-f7e3ea059024
 # ╟─3cd535e4-ee26-11ea-2482-fb4ad43dda19
 # ╟─7c41f0ca-ee15-11ea-05fb-d97a836659af
+# ╟─c313a99a-eeaa-11ea-0ffb-7d3dd3e412f6
 # ╠═8b96e0bc-ee15-11ea-11cd-cfecea7075a0
 # ╟─0cabed84-ee1e-11ea-11c1-7d8a4b4ad1af
 # ╟─5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
@@ -1586,7 +1630,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 # ╠═e7f8b41a-ee25-11ea-287a-e75d33fbd98b
 # ╟─8a335044-ee19-11ea-0255-b9391246d231
-# ╠═7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
+# ╟─7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
 # ╠═aad67fd0-ee15-11ea-00d4-274ec3cda3a3
 # ╟─8ae59674-ee18-11ea-3815-f50713d0fa08
 # ╟─94c0798e-ee18-11ea-3212-1533753eabb6
