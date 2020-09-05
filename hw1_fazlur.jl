@@ -833,6 +833,9 @@ K_test = [
 # ╔═╡ 42dfa206-ee1e-11ea-1fcd-21671042064c
 imfilter(test_image_with_border, K_test)
 
+# ╔═╡ dd732d74-ef8b-11ea-2db3-5506c64216c0
+convolve_image(test_image_with_border, K_test) == imfilter(test_image_with_border, K_test)
+
 # ╔═╡ 6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 md"_Edit_ `K_test` _to create your own test case!_"
 
@@ -1637,6 +1640,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─577c6daa-ee1e-11ea-1275-b7abc7a27d73
 # ╠═275a99c8-ee1e-11ea-0a76-93e3618c9588
 # ╠═42dfa206-ee1e-11ea-1fcd-21671042064c
+# ╠═dd732d74-ef8b-11ea-2db3-5506c64216c0
 # ╟─6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 # ╠═e7f8b41a-ee25-11ea-287a-e75d33fbd98b
 # ╟─8a335044-ee19-11ea-0255-b9391246d231
