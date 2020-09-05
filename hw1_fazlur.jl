@@ -833,9 +833,6 @@ K_test = [
 # ╔═╡ 42dfa206-ee1e-11ea-1fcd-21671042064c
 imfilter(test_image_with_border, K_test)
 
-# ╔═╡ dd732d74-ef8b-11ea-2db3-5506c64216c0
-convolve_image(test_image_with_border, K_test) == imfilter(test_image_with_border, K_test)
-
 # ╔═╡ 6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 md"_Edit_ `K_test` _to create your own test case!_"
 
@@ -1201,6 +1198,42 @@ else
 		elseif isnothing(result)
 			keep_working(md"Did you forget to write `return`?")
 		elseif result != 42 || extend_mat(input, -1, 3) != 37
+			keep_working()
+		else
+			correct()
+		end
+	end
+end
+
+# ╔═╡ dd732d74-ef8b-11ea-2db3-5506c64216c0
+if !@isdefined(convolve_image)
+	not_defined(:convolve_image)
+else
+	let
+		input = test_image_with_border
+		result = convolve_image(input, K_test)
+		output = imfilter(input, K_test)
+		if ismissing(result)
+			still_missing()
+		elseif result != output
+			keep_working()
+		else
+			correct()
+		end
+	end
+end
+
+# ╔═╡ ad24e5a8-ef8c-11ea-2c3a-f5712a425ec4
+if !@isdefined(convolve_image)
+	not_defined(:convolve_image)
+else
+	let
+		input = philip
+		result = convolve_image(input, K_test)
+		output = imfilter(input, K_test)
+		if ismissing(result)
+			still_missing()
+		elseif result != output
 			keep_working()
 		else
 			correct()
@@ -1643,6 +1676,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╠═dd732d74-ef8b-11ea-2db3-5506c64216c0
 # ╟─6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 # ╠═e7f8b41a-ee25-11ea-287a-e75d33fbd98b
+# ╠═ad24e5a8-ef8c-11ea-2c3a-f5712a425ec4
 # ╟─8a335044-ee19-11ea-0255-b9391246d231
 # ╟─7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
 # ╠═aad67fd0-ee15-11ea-00d4-274ec3cda3a3
