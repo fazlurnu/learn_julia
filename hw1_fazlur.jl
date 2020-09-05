@@ -790,23 +790,32 @@ $$M' = M * K.$$
 """
 
 # ╔═╡ 8b96e0bc-ee15-11ea-11cd-cfecea7075a0
-function convolve_image(M::AbstractMatrix, K::AbstractMatrix)
-	rows, cols = size(K)
-	M_new = copy(M)
-	
-	for i in 1:size(M,1)
-		for j in 1:size(M,2)
-			M_new[i, j] = 0
-			for k in 1:rows
-				for l in 1:cols
-					M_new[i, j] += clamp(extend_mat(M, i-k, j-l)*K[k,l], 0, 1)
+begin 
+	function convolve_image(M::AbstractMatrix, K::AbstractMatrix)
+		rows, cols = size(K)
+		M_new = copy(M)
+
+		for i in 1:size(M,1)
+			for j in 1:size(M,2)
+				M_new[i, j] = 0
+				for k in 1:rows
+					for l in 1:cols
+						if (typeof(M) == Array{RGB{Normed{UInt8,8}},2})
+							M_new[i, j] += mapc(x->clamp(x,0,1), extend_mat(M, i-k, j-l)*K[k,l])
+						else
+							M_new[i, j] += clamp(extend_mat(M, i-k, j-l)*K[k,l], 0, 1)
+						end
+					end
 				end
 			end
 		end
+
+		return M_new
 	end
-	 
-	return M_new
 end
+
+# ╔═╡ 32b66ea8-ef88-11ea-2514-656d10e39d1a
+RGBX(0, -2, 1.2)
 
 # ╔═╡ 5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 md"_Let's test it out! 🎃_"
@@ -822,13 +831,13 @@ K_test = [
 ]
 
 # ╔═╡ 42dfa206-ee1e-11ea-1fcd-21671042064c
-convolve_image(test_image_with_border, K_test)
+imfilter(test_image_with_border, K_test)
 
 # ╔═╡ 6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 md"_Edit_ `K_test` _to create your own test case!_"
 
 # ╔═╡ e7f8b41a-ee25-11ea-287a-e75d33fbd98b
-convolve_image(philip, K_test)
+imfilter(philip, K_test)
 
 # ╔═╡ 8a335044-ee19-11ea-0255-b9391246d231
 md"""
@@ -1622,6 +1631,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─7c41f0ca-ee15-11ea-05fb-d97a836659af
 # ╟─c313a99a-eeaa-11ea-0ffb-7d3dd3e412f6
 # ╠═8b96e0bc-ee15-11ea-11cd-cfecea7075a0
+# ╠═32b66ea8-ef88-11ea-2514-656d10e39d1a
 # ╟─0cabed84-ee1e-11ea-11c1-7d8a4b4ad1af
 # ╟─5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 # ╟─577c6daa-ee1e-11ea-1275-b7abc7a27d73
