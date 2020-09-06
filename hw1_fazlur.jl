@@ -616,10 +616,7 @@ function convolve_vector(v, k)
 	l = (length(k) - 1) ÷ 2
 	
 	for i in 1:length(v)
-		v_new[i] = 0
-		for n in -l:l
-			v_new[i] += extend(v, n+i)*k[n+(l+1)]
-		end
+		v_new[i] = sum(map(x -> extend(v, x), (-l+i:l+i)).*k)
 	end
 	
 	return v_new
@@ -793,7 +790,7 @@ $$M' = M * K.$$
 begin 
 	function convolve_image(M::AbstractMatrix, K::AbstractMatrix)
 		rows, cols = size(K)
-		M_new = copy(M)
+		M_new = fill(AbstractMatrix(0.5), (size(M)))
 
 		for i in 1:size(M,1)
 			for j in 1:size(M,2)
@@ -803,7 +800,7 @@ begin
 						if (typeof(M) == Array{RGB{Normed{UInt8,8}},2})
 							M_new[i, j] += mapc(x->clamp(x,0,1), extend_mat(M, i-k, j-l)*K[k,l])
 						else
-							M_new[i, j] += clamp(extend_mat(M, i-k, j-l)*K[k,l], 0, 1)
+							M_new[i, j] += clamp(extend_mat(M, i-rows+k+1, j-rows+l+1)*K[k,l], 0, 1)
 						end
 					end
 				end
@@ -833,11 +830,17 @@ K_test = [
 # ╔═╡ 42dfa206-ee1e-11ea-1fcd-21671042064c
 imfilter(test_image_with_border, K_test)
 
+# ╔═╡ 6b4b8d72-efea-11ea-2a81-6599cbe0883c
+convolve_image(test_image_with_border, K_test)
+
 # ╔═╡ 6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 md"_Edit_ `K_test` _to create your own test case!_"
 
 # ╔═╡ e7f8b41a-ee25-11ea-287a-e75d33fbd98b
-imfilter(philip, K_test)
+typeof(imfilter(philip, K_test))
+
+# ╔═╡ e7d005da-efea-11ea-00d8-d30333d78878
+convolve_image(philip, K_test)
 
 # ╔═╡ 8a335044-ee19-11ea-0255-b9391246d231
 md"""
@@ -1673,9 +1676,11 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─577c6daa-ee1e-11ea-1275-b7abc7a27d73
 # ╠═275a99c8-ee1e-11ea-0a76-93e3618c9588
 # ╠═42dfa206-ee1e-11ea-1fcd-21671042064c
+# ╠═6b4b8d72-efea-11ea-2a81-6599cbe0883c
 # ╠═dd732d74-ef8b-11ea-2db3-5506c64216c0
 # ╟─6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 # ╠═e7f8b41a-ee25-11ea-287a-e75d33fbd98b
+# ╠═e7d005da-efea-11ea-00d8-d30333d78878
 # ╠═ad24e5a8-ef8c-11ea-2c3a-f5712a425ec4
 # ╟─8a335044-ee19-11ea-0255-b9391246d231
 # ╟─7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
