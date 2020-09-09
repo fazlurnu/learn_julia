@@ -609,6 +609,11 @@ Again, we need to take care about what happens if $v_{i -n }$ falls off the end 
 👉 Write a function `convolve_vector(v, k)` that performs this convolution. You need to think of the vector $k$ as being *centred* on the position $i$. So $n$ in the above formula runs between $-\ell$ and $\ell$, where $2\ell + 1$ is the length of the vector $k$. You will need to do the necessary manipulation of indices.
 """
 
+# ╔═╡ ef3676f0-f00e-11ea-2f42-2f0c4a7bbd77
+md"""
+### Method 1
+"""
+
 # ╔═╡ 28e20950-ee0c-11ea-0e0a-b5f2e570b56e
 function convolve_vector(v, k)
 	v_new = copy(v)
@@ -619,6 +624,27 @@ function convolve_vector(v, k)
 		v_new[i] = sum(map(x -> extend(v, x), (-l+i:l+i)).*k)
 	end
 	
+	return v_new
+end
+
+# ╔═╡ 035fca14-f00f-11ea-1ff2-958a0a4e782b
+md"""
+### Method 2
+"""
+
+# ╔═╡ e8bc7296-f00e-11ea-0422-3b35ad27445e
+function convolve_vector2(v, k)
+	v_new = copy(v)
+	
+	l = (length(k) - 1) ÷ 2
+
+	for i in 1:length(v)
+		v_new[i] = 0
+		for n in -l:l
+			v_new[i] += extend(v, n+i)*k[n+(l+1)]
+		end
+	end
+
 	return v_new
 end
 
@@ -790,18 +816,14 @@ $$M' = M * K.$$
 begin 
 	function convolve_image(M::AbstractMatrix, K::AbstractMatrix)
 		rows, cols = size(K)
-		M_new = fill(AbstractMatrix(0.5), (size(M)))
+		M_new = fill(RGB(0.0), (size(M)))
 
 		for i in 1:size(M,1)
 			for j in 1:size(M,2)
-				M_new[i, j] = 0
+				M_new[i,j] = 0
 				for k in 1:rows
 					for l in 1:cols
-						if (typeof(M) == Array{RGB{Normed{UInt8,8}},2})
-							M_new[i, j] += mapc(x->clamp(x,0,1), extend_mat(M, i-k, j-l)*K[k,l])
-						else
-							M_new[i, j] += clamp(extend_mat(M, i-rows+k+1, j-rows+l+1)*K[k,l], 0, 1)
-						end
+						M_new[i,j] += extend_mat(M, i+k-(rows-1), j+l-(cols-1))*K[k,l]
 					end
 				end
 			end
@@ -811,8 +833,8 @@ begin
 	end
 end
 
-# ╔═╡ 32b66ea8-ef88-11ea-2514-656d10e39d1a
-RGBX(0, -2, 1.2)
+# ╔═╡ 103da71e-f23b-11ea-1058-bdd32488554f
+typeof(philip)
 
 # ╔═╡ 5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 md"_Let's test it out! 🎃_"
@@ -823,21 +845,21 @@ test_image_with_border = [get(small_image, (i, j), Gray(0)) for (i,j) in Iterato
 # ╔═╡ 275a99c8-ee1e-11ea-0a76-93e3618c9588
 K_test = [
 	0   0  0
-	1/2 0  1/2
+	1/2 0  -1/2
 	0   0  0
 ]
 
 # ╔═╡ 42dfa206-ee1e-11ea-1fcd-21671042064c
-imfilter(test_image_with_border, K_test)
+convolved = convolve_image(test_image_with_border, K_test)
 
 # ╔═╡ 6b4b8d72-efea-11ea-2a81-6599cbe0883c
-convolve_image(test_image_with_border, K_test)
+convolved_default = imfilter(test_image_with_border, K_test)
 
 # ╔═╡ 6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 md"_Edit_ `K_test` _to create your own test case!_"
 
 # ╔═╡ e7f8b41a-ee25-11ea-287a-e75d33fbd98b
-typeof(imfilter(philip, K_test))
+imfilter(philip, K_test)
 
 # ╔═╡ e7d005da-efea-11ea-00d8-d30333d78878
 convolve_image(philip, K_test)
@@ -1201,42 +1223,6 @@ else
 		elseif isnothing(result)
 			keep_working(md"Did you forget to write `return`?")
 		elseif result != 42 || extend_mat(input, -1, 3) != 37
-			keep_working()
-		else
-			correct()
-		end
-	end
-end
-
-# ╔═╡ dd732d74-ef8b-11ea-2db3-5506c64216c0
-if !@isdefined(convolve_image)
-	not_defined(:convolve_image)
-else
-	let
-		input = test_image_with_border
-		result = convolve_image(input, K_test)
-		output = imfilter(input, K_test)
-		if ismissing(result)
-			still_missing()
-		elseif result != output
-			keep_working()
-		else
-			correct()
-		end
-	end
-end
-
-# ╔═╡ ad24e5a8-ef8c-11ea-2c3a-f5712a425ec4
-if !@isdefined(convolve_image)
-	not_defined(:convolve_image)
-else
-	let
-		input = philip
-		result = convolve_image(input, K_test)
-		output = imfilter(input, K_test)
-		if ismissing(result)
-			still_missing()
-		elseif result != output
 			keep_working()
 		else
 			correct()
@@ -1640,7 +1626,10 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╠═dec45ab6-ee9d-11ea-1591-2b10fa18374c
 # ╟─ea435e58-ee11-11ea-3785-01af8dd72360
 # ╟─80ab64f4-ee09-11ea-29b4-498112ed0799
+# ╟─ef3676f0-f00e-11ea-2f42-2f0c4a7bbd77
 # ╠═28e20950-ee0c-11ea-0e0a-b5f2e570b56e
+# ╟─035fca14-f00f-11ea-1ff2-958a0a4e782b
+# ╠═e8bc7296-f00e-11ea-0422-3b35ad27445e
 # ╟─e9aadeee-ee1d-11ea-3525-95f6ba5fda31
 # ╟─5eea882c-ee13-11ea-0d56-af81ecd30a4a
 # ╠═93284f92-ee12-11ea-0342-833b1a30625c
@@ -1670,18 +1659,16 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─7c41f0ca-ee15-11ea-05fb-d97a836659af
 # ╟─c313a99a-eeaa-11ea-0ffb-7d3dd3e412f6
 # ╠═8b96e0bc-ee15-11ea-11cd-cfecea7075a0
-# ╠═32b66ea8-ef88-11ea-2514-656d10e39d1a
+# ╠═103da71e-f23b-11ea-1058-bdd32488554f
 # ╟─0cabed84-ee1e-11ea-11c1-7d8a4b4ad1af
 # ╟─5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
-# ╟─577c6daa-ee1e-11ea-1275-b7abc7a27d73
+# ╠═577c6daa-ee1e-11ea-1275-b7abc7a27d73
 # ╠═275a99c8-ee1e-11ea-0a76-93e3618c9588
 # ╠═42dfa206-ee1e-11ea-1fcd-21671042064c
 # ╠═6b4b8d72-efea-11ea-2a81-6599cbe0883c
-# ╠═dd732d74-ef8b-11ea-2db3-5506c64216c0
 # ╟─6e53c2e6-ee1e-11ea-21bd-c9c05381be07
 # ╠═e7f8b41a-ee25-11ea-287a-e75d33fbd98b
 # ╠═e7d005da-efea-11ea-00d8-d30333d78878
-# ╠═ad24e5a8-ef8c-11ea-2c3a-f5712a425ec4
 # ╟─8a335044-ee19-11ea-0255-b9391246d231
 # ╟─7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
 # ╠═aad67fd0-ee15-11ea-00d4-274ec3cda3a3
