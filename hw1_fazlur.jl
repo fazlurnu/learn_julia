@@ -833,9 +833,6 @@ begin
 	end
 end
 
-# ╔═╡ 103da71e-f23b-11ea-1058-bdd32488554f
-typeof(philip)
-
 # ╔═╡ 5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 md"_Let's test it out! 🎃_"
 
@@ -884,9 +881,33 @@ $$G(x,y)=\frac{1}{2\pi \sigma^2}e^{\frac{-(x^2+y^2)}{2\sigma^2}}$$
 """
 
 # ╔═╡ aad67fd0-ee15-11ea-00d4-274ec3cda3a3
-function with_gaussian_blur(image)
+function my_gaussian_kernel(size)
+	kernel_length = 2size
+	xValues = centered(-kernel_length:kernel_length)
+	yValues = centered(-kernel_length:kernel_length)
 	
-	return missing
+	σ = size
+	
+	kernel = centered(fill(0.0, (length(xValues), length(yValues))))
+	
+	for x in xValues
+		for y in yValues
+			kernel[x,y] = 1/(2π*σ^2)*exp(-(x^2+y^2)/(2*σ^2))
+		end
+	end
+	
+	sumOfKernel = sum(kernel)
+	
+	return kernel./sumOfKernel
+	
+end
+
+# ╔═╡ b488918a-f240-11ea-32f1-45404a066393
+@bind size_kernel Slider(1:15, show_value=true)
+
+# ╔═╡ 135ea47c-f23e-11ea-2d30-6fd06bc17261
+function with_gaussian_blur(image)
+	return imfilter(image, my_gaussian_kernel(size_kernel))
 end
 
 # ╔═╡ 8ae59674-ee18-11ea-3815-f50713d0fa08
@@ -937,7 +958,6 @@ For simplicity you can choose one of the "channels" (colours) in the image to ap
 
 # ╔═╡ 9eeb876c-ee15-11ea-1794-d3ea79f47b75
 function with_sobel_edge_detect(image)
-	
 	return missing
 end
 
@@ -1659,7 +1679,6 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─7c41f0ca-ee15-11ea-05fb-d97a836659af
 # ╟─c313a99a-eeaa-11ea-0ffb-7d3dd3e412f6
 # ╠═8b96e0bc-ee15-11ea-11cd-cfecea7075a0
-# ╠═103da71e-f23b-11ea-1058-bdd32488554f
 # ╟─0cabed84-ee1e-11ea-11c1-7d8a4b4ad1af
 # ╟─5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 # ╠═577c6daa-ee1e-11ea-1275-b7abc7a27d73
@@ -1672,6 +1691,8 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─8a335044-ee19-11ea-0255-b9391246d231
 # ╟─7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
 # ╠═aad67fd0-ee15-11ea-00d4-274ec3cda3a3
+# ╠═b488918a-f240-11ea-32f1-45404a066393
+# ╠═135ea47c-f23e-11ea-2d30-6fd06bc17261
 # ╟─8ae59674-ee18-11ea-3815-f50713d0fa08
 # ╟─94c0798e-ee18-11ea-3212-1533753eabb6
 # ╠═a75701c4-ee18-11ea-2863-d3042e71a68b
