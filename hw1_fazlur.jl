@@ -833,11 +833,17 @@ begin
 	end
 end
 
+# ╔═╡ 8fb8543a-f24a-11ea-3b9e-fd1a4663ffba
+-5/2:5/2
+
+# ╔═╡ bd262cf8-f24a-11ea-20bc-0518bc9cfc33
+sliced_image = [get(philip, (20,20), extend_mat(philip, i,j)) for (i,j) in Iterators.product(-1+20:1+20, -1+20:1+20)]
+
 # ╔═╡ 5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 md"_Let's test it out! 🎃_"
 
 # ╔═╡ 577c6daa-ee1e-11ea-1275-b7abc7a27d73
-test_image_with_border = [get(small_image, (i, j), Gray(0)) for (i,j) in Iterators.product(-1:7,-1:7)]
+test_image_with_border = [get(small_image, (i, j), Gray(0.0)) for (i,j) in Iterators.product(-1:7,-1:7)]
 
 # ╔═╡ 275a99c8-ee1e-11ea-0a76-93e3618c9588
 K_test = [
@@ -892,18 +898,23 @@ function my_gaussian_kernel(size)
 	
 	for x in xValues
 		for y in yValues
-			kernel[x,y] = 1/(2π*σ^2)*exp(-(x^2+y^2)/(2*σ^2))
+			if (σ == 0)
+				kernel[x,y] = 1
+			else
+				kernel[x,y] = 1/(2π*σ^2)*exp(-(x^2+y^2)/(2*σ^2))
+			end
 		end
 	end
-	
-	sumOfKernel = sum(kernel)
-	
-	return kernel./sumOfKernel
+		
+	return kernel./sum(kernel)
 	
 end
 
 # ╔═╡ b488918a-f240-11ea-32f1-45404a066393
-@bind size_kernel Slider(1:15, show_value=true)
+@bind size_kernel Slider(0:15, show_value=true)
+
+# ╔═╡ bc4f6da8-f24f-11ea-0f65-95650179c3ad
+sum(my_gaussian_kernel(size_kernel))
 
 # ╔═╡ 135ea47c-f23e-11ea-2d30-6fd06bc17261
 function with_gaussian_blur(image)
@@ -958,7 +969,11 @@ For simplicity you can choose one of the "channels" (colours) in the image to ap
 
 # ╔═╡ 9eeb876c-ee15-11ea-1794-d3ea79f47b75
 function with_sobel_edge_detect(image)
-	return missing
+	G_x = [1 0 -1; 2 0 -2; 1 0 -1]
+	G_y = [1 2 1; 0 0 0; -1 -2 -1]
+	
+	G_total = (G_x.^2 + G_y.^2).^(1/2)
+	return convolve_image(image, G_total)
 end
 
 # ╔═╡ 1b85ee76-ee10-11ea-36d7-978340ef61e6
@@ -1679,6 +1694,8 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─7c41f0ca-ee15-11ea-05fb-d97a836659af
 # ╟─c313a99a-eeaa-11ea-0ffb-7d3dd3e412f6
 # ╠═8b96e0bc-ee15-11ea-11cd-cfecea7075a0
+# ╠═8fb8543a-f24a-11ea-3b9e-fd1a4663ffba
+# ╠═bd262cf8-f24a-11ea-20bc-0518bc9cfc33
 # ╟─0cabed84-ee1e-11ea-11c1-7d8a4b4ad1af
 # ╟─5a5135c6-ee1e-11ea-05dc-eb0c683c2ce5
 # ╠═577c6daa-ee1e-11ea-1275-b7abc7a27d73
@@ -1692,6 +1709,7 @@ with_sobel_edge_detect(sobel_camera_image)
 # ╟─7c50ea80-ee15-11ea-328f-6b4e4ff20b7e
 # ╠═aad67fd0-ee15-11ea-00d4-274ec3cda3a3
 # ╠═b488918a-f240-11ea-32f1-45404a066393
+# ╠═bc4f6da8-f24f-11ea-0f65-95650179c3ad
 # ╠═135ea47c-f23e-11ea-2d30-6fd06bc17261
 # ╟─8ae59674-ee18-11ea-3815-f50713d0fa08
 # ╟─94c0798e-ee18-11ea-3212-1533753eabb6
